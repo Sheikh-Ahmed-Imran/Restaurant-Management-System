@@ -1,6 +1,13 @@
+
+body{
+    position: relative;
+}
+
 .navbar{
     padding: 20px 0px;
     display: flex;
+    position: fixed absolute;
+   
     justify-content: space-between;
     align-items: center;   
 }

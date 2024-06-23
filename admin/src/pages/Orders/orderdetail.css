@@ -1,0 +1,43 @@
+/* OrderDetail.css */
+
+.order-details {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+  }
+  
+  .order-details h3 {
+    margin-top: 0;
+  }
+  
+  .order-details div {
+    margin-bottom: 20px;
+  }
+  
+  .order-details ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+  
+  .order-details ul li {
+    margin-bottom: 5px;
+  }
+  
+  .order-details p {
+    margin: 0;
+  }
+  
+  .order-details .delivery-address {
+    margin-bottom: 20px;
+  }
+  
+  .order-details .order-amount,
+  .order-details .status {
+    font-weight: bold;
+  }
+  
+  /* You can add more styles as needed */
+  

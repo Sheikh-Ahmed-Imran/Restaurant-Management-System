@@ -4,25 +4,33 @@ import fs from 'fs'
 
 // add food item
 
-const addFood = async (req,res) => {
-
+const addFood = async (req, res) => {
+    // Get the filename of the uploaded image
     let image_filename = `${req.file.filename}`;
 
+    // Create a new food item with the data from the request body
     const food = new foodModel({
-        name:req.body.name,
-        description:req.body.description,
-        price:req.body.price,
-        category:req.body.category,
-        image:image_filename
-    })
+        name: req.body.name,
+        description: req.body.description,
+        price: req.body.price,
+        category: req.body.category,
+        subcategory: req.body.subcategory, // New field for subcategory
+        cookTime: req.body.cookTime, // New field for cook time in minutes
+        image: image_filename
+    });
+
     try {
+        // Save the food item to the database
         await food.save();
-        res.json({success:true,message:"Food Added"})
+        // Send a success response
+        res.json({ success: true, message: "Food Added" });
     } catch (error) {
-        console.log(error)
-        res.json({success:false,message:"Error"})
+        console.log(error);
+        // Send an error response
+        res.json({ success: false, message: "Error" });
     }
-}
+};
+
 
 // all food list
 const listFood = async (req,res) => {

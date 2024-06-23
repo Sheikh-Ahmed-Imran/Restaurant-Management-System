@@ -88,7 +88,7 @@ export const menu_list = [
         menu_image: menu_1
     },
     {
-        menu_name: "Rolls",
+        menu_name: "Shwarma",
         menu_image: menu_2
     },
     {
@@ -104,15 +104,15 @@ export const menu_list = [
         menu_image: menu_5
     },
     {
-        menu_name: "Pure Veg",
+        menu_name: "Chinese",
         menu_image: menu_6
     },
     {
-        menu_name: "Pasta",
+        menu_name: "Fries",
         menu_image: menu_7
     },
     {
-        menu_name: "Noodles",
+        menu_name: "Karahi",
         menu_image: menu_8
     }]
 

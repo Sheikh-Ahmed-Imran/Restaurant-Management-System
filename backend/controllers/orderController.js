@@ -22,22 +22,22 @@ const placeOrder = async (req,res) => {
 
         const line_items = req.body.items.map((item)=>({
             price_data:{
-                currency:"ron",
+                currency:"pkr",
                 product_data:{
                     name:item.name
                 },
-                unit_amount:item.price*100*80
+                unit_amount:item.price
             },
             quantity:item.quantity
         }))
 
         line_items.push({
             price_data:{
-                currency:"ron",
+                currency:"pkr",
                 product_data:{
-                    name:"Delivery Charges"
+                    name:"Charges"
                 },
-                unit_amount:2*100*80
+                unit_amount:2*100*278
             },
             quantity:1
         })
@@ -88,10 +88,23 @@ const userOrders = async (req,res) => {
 }
 
 // Listing orders for admin panel
-const listOrders = async (req,res) => {
+const listOrders = async (req, res) => {
     try {
-        const orders = await orderModel.find({});
-        res.json({success:true,data:orders})
+        const orders = await orderModel.find({}).sort({ date: -1 });
+        res.json({ success: true, data: orders });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Error" });
+    }
+};
+
+const getSingleOrder = async (req,res) => {
+    try {
+        const order = await orderModel.findById(req.params.id)
+        if(!order){
+            await res.json({success:false,message:"Error.Order not found"})
+        }
+        res.json({success:true,data:order})
     } catch (error) {
         console.log(error);
         res.json({success:false,message:"Error"})
@@ -108,6 +121,21 @@ const updateStatus = async (req,res) => {
         res.json({success:false,message:"Error"})
     }
 }
+const deleteOrder = async (req, res) => {
+    try {
+        const { orderId } = req.params; // Get order ID from request parameters
+        const deletedOrder = await orderModel.findByIdAndDelete(orderId);
+
+        if (deletedOrder) {
+            res.json({ success: true, message: 'Order deleted successfully', data: deletedOrder });
+        } else {
+            res.json({ success: false, message: 'Order not found' });
+        }
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: 'Error deleting order' });
+    }
+};
 
 
-export {placeOrder,verifyOrder,userOrders,listOrders,updateStatus}
+export {placeOrder,verifyOrder,userOrders,listOrders,updateStatus,getSingleOrder,deleteOrder}
