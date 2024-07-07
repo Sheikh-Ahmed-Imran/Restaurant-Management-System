@@ -6,56 +6,70 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
 
 
 // placing user order from frontend
-const placeOrder = async (req,res) => {
-
-    const frontend_url = "http://localhost:5173";
+const placeOrder = async (req, res) => {
+    const frontend_url = "http://localhost:5174";
 
     try {
-        const newOrder = new orderModel({
-            userId:req.body.userId,
-            items:req.body.items,
-            amount:req.body.amount,
-            address:req.body.address
-        })
-        await newOrder.save();
-        await userModel.findByIdAndUpdate(req.body.userId,{cartData:{}});
+        // Calculate maximum cook time
+        let maxCookTime = 0;
+        req.body.items.forEach(item => {
+            if (item.cookTime > maxCookTime) {
+                maxCookTime = item.cookTime;
+            }
+        });
 
-        const line_items = req.body.items.map((item)=>({
-            price_data:{
-                currency:"pkr",
-                product_data:{
-                    name:item.name
+        // Create new order with calculated order time
+        const newOrder = new orderModel({
+            userId: req.body.userId,
+            items: req.body.items,
+            amount: req.body.amount,
+            address: req.body.address,
+            orderTime: maxCookTime // Assign maximum cook time to orderTime
+        });    
+
+        await newOrder.save();
+        await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+
+        // Prepare line items for Stripe session
+        const line_items = req.body.items.map((item) => ({
+            price_data: {      
+                currency: "pkr",
+                product_data: {
+                    name: item.name
                 },
-                unit_amount:item.price
+                unit_amount: item.price*100
             },
-            quantity:item.quantity
-        }))
+            quantity: item.quantity
+        }));
 
         line_items.push({
-            price_data:{
-                currency:"pkr",
-                product_data:{
-                    name:"Charges"
+            price_data: {
+                currency: "pkr",
+                product_data: {
+                    name: "Charges"
                 },
-                unit_amount:2*100*278
+                unit_amount: 2 * 1 * 100
             },
-            quantity:1
-        })
+            quantity: 1
+        });
 
+        // Create Stripe checkout session
         const session = await stripe.checkout.sessions.create({
-            line_items:line_items,
-            mode:'payment',
-            success_url:`${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
-            cancel_url:`${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
-        })
+            line_items: line_items,
+            mode: 'payment',
+            success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
+            cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
+        });
 
-        res.json({success:true,session_url:session.url})
+        // Respond with success and session URL
+        res.json({ success: true, session_url: session.url });
 
     } catch (error) {
         console.log(error);
-        res.json({success:false,message:"Error"})
+        res.json({ success: false, message: "Error" });
     }
 }
+
 
 const verifyOrder = async (req,res) => {
     const {orderId,success} = req.body;

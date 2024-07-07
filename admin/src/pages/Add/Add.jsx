@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Add.css';
 import { assets } from '../../assets/assets';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
 const subcategories = {
-  Pizza: ['Vegetarian', 'Tandoori', 'BBQ ','Cheese'],
-  Pastas: ['Vegetarian', 'Non-Vegetarian'],
-  IceCream: ['Mango', 'Chocolate', 'Toti Faroti','Vanilla'],
-  // Rice: ['Fried Rice', 'Steamed Rice'],
-  BarBQ: ['Chicken', 'Beef'],
-  ColdDrinks: ['Soda', 'Juice', 'Water'],
-  Burger: ['Zinger', 'Chicken','Fried Chicken','Zinger Cheese',],
-  Karahi: ['Chicken Karahi', 'Mutton Karahi']
+  Pizza: ['Large', 'Medium', 'Small'],
+  Pastas: ['F1', 'F2'],
+  IceCream: ['2 Scoop', '3 Scoop', '4 Scoop'],
+  Shwarma: ['zingershwarma', 'zingercheeseshwarma', 'chickenshwarma'],
+  Extras: ['extras'],
+  Burger: ['cheese', 'zinger', 'chicken'],
+  Coldrinks: ['colddrinks'],
+  Fries: ['fries']
 };
 
 const Add = ({ url }) => {
@@ -22,9 +22,13 @@ const Add = ({ url }) => {
     description: '',
     price: '',
     category: 'Pizza', // Default category
-    subcategory: 'Small', // Default subcategory
+    subcategory: 'Large', // Default subcategory
     cookTime: ''
   });
+
+  useEffect(() => {
+    setData(data => ({ ...data, subcategory: subcategories[data.category][0] }));
+  }, [data.category]);
 
   const onChangeHandler = (event) => {
     const name = event.target.name;
@@ -41,21 +45,31 @@ const Add = ({ url }) => {
     formData.append('category', data.category);
     formData.append('subcategory', data.subcategory);
     formData.append('cookTime', Number(data.cookTime));
-    formData.append('image', image);
-    const response = await axios.post(`${url}/api/food/add`, formData);
-    if (response.data.success) {
-      setData({
-        name: '',
-        description: '',
-        price: '',
-        category: 'Pizza', // Reset to default category
-        subcategory: 'Small', // Reset to default subcategory
-        cookTime: ''
+    formData.append('image', image); // Ensure image is appended as a file
+
+    try {
+      const response = await axios.post(`${url}/api/food/add`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
       });
-      setImage(false);
-      toast.success(response.data.message);
-    } else {
-      toast.error(response.data.message);
+      if (response.data.success) {
+        setData({
+          name: '',
+          description: '',
+          price: '',
+          category: 'Pizza', // Reset to default category
+          subcategory: 'Large', // Reset to default subcategory
+          cookTime: ''
+        });
+        setImage(false);
+        toast.success(response.data.message);
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Error adding food");
     }
   };
 
@@ -67,7 +81,7 @@ const Add = ({ url }) => {
           <label htmlFor='image'>
             <img className='image' src={image ? URL.createObjectURL(image) : assets.upload_area} alt='' />
           </label>
-          <input onChange={(e) => setImage(e.target.files[0])} type='file' id='image' hidden required />
+          <input onChange={(e) => setImage(e.target.files[0])} type='file' id='image' hidden />
         </div>
         <div className='add-product-name flex-col'>
           <p>Product name</p>
@@ -89,7 +103,7 @@ const Add = ({ url }) => {
           <div className='add-subcategory flex-col'>
             <p>Product Subcategory</p>
             <select className='selectt' onChange={onChangeHandler} name='subcategory'>
-              {subcategories[data.category].map((sub, index) => (     
+              {subcategories[data.category].map((sub, index) => (
                 <option key={index} value={sub}>{sub}</option>
               ))}
             </select>

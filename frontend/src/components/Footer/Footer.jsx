@@ -23,7 +23,7 @@ const Footer = () => {
               <li>Home</li>
               <li>About us</li>
               <li>Delivery</li>
-              <li>Privacy Policy</li>
+              
             </ul>
         </div>
         <div className="footer-content-right">
@@ -35,7 +35,7 @@ const Footer = () => {
         </div>
       </div>
       <hr/>
-      <p className='footer-copyright'>Copyright 2024 © Dld - All rights reserved.</p>
+      <p className='footer-copyright'>Copyright 2024 © Cafe Management System - All rights reserved.</p>
     </div>
   )
 }

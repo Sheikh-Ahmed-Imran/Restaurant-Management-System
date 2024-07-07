@@ -17,9 +17,9 @@ const Print = ({ orders }) => {
       {orders.map((order, index) => (
         <div key={index} className="ticket" ref={componentRef}>
           <span className="centered">
-            RECEIPT EXAMPLE
-            <br />{order.address.firstName}
-            <br />{order.userId}
+            Order Receipt
+            <br />{order.address.firstName}{order.address.lastName}
+            <br />Table No :23
           </span>
           <table>
             <thead>
@@ -39,13 +39,14 @@ const Print = ({ orders }) => {
                   <td className="price">Rs{item.price * item.quantity}</td>
                 </tr>
               ))}
+            
+              <tr>
+                <td colSpan="2" className="description">Service Charges</td>
+                <td className="price">25</td>
+              </tr>
               <tr>
                 <td colSpan="2" className="description">TOTAL</td>
                 <td className="price">Rs{order.amount}</td>
-              </tr>
-              <tr>
-                <td colSpan="2" className="description">Service Charges</td>
-                <td className="price">Rs 25</td>
               </tr>
             </tbody>
           </table>

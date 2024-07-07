@@ -84,35 +84,35 @@ export const assets = {
 
 export const menu_list = [
     {
-        menu_name: "Salad",
+        menu_name: "Pizza",
         menu_image: menu_1
     },
     {
-        menu_name: "Shwarma",
+        menu_name: "Pastas",
         menu_image: menu_2
     },
     {
-        menu_name: "Deserts",
+        menu_name: "IceCream",
         menu_image: menu_3
     },
     {
-        menu_name: "Sandwich",
+        menu_name: "Shwarma",
         menu_image: menu_4
     },
     {
-        menu_name: "Cake",
+        menu_name: "Burger",
         menu_image: menu_5
     },
     {
-        menu_name: "Chinese",
+        menu_name: "Extras",
         menu_image: menu_6
     },
     {
-        menu_name: "Fries",
+        menu_name: "Coldrinks",
         menu_image: menu_7
     },
     {
-        menu_name: "Karahi",
+        menu_name: "Fries",
         menu_image: menu_8
     }]
 

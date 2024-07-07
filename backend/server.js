@@ -10,10 +10,14 @@ import orderRouter from "./routes/orderRoute.js"
 // app config      
 const app = express()  
 const port = 4000   
-
+const corsOption = {
+    origin: ['http://localhost:5174','http://localhost:5173'],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+}
 // middleware    
 app.use(express.json())
-app.use(cors())
+app.use(cors(corsOption))
 
 // db connection
 connectDB();
@@ -25,7 +29,7 @@ app.use("/api/user",userRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/order",orderRouter)
 
-
+  
 
 app.get("/",(req,res)=>{
     res.send("API Working")

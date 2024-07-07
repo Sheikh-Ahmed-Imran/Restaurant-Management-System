@@ -2,16 +2,8 @@ import React, { useState } from 'react';
 import './ExploreMenu.css';
 import { menu_list } from '../../assets/assets';
 
-const subcategories = {
-  Pizza: ['Small', 'Medium', 'Large'],
-  Pastas: ['Vegetarian', 'Non-Vegetarian'],
-  Deserts: ['Ice Cream', 'Cake', 'Cookies'],
-  Rice: ['Fried Rice', 'Steamed Rice'],
-  BarBQ: ['Chicken', 'Beef'],
-  ColdDrinks: ['Soda', 'Juice', 'Water'],
-  Soup: ['Chicken Soup', 'Vegetable Soup'],
-  Karahi: ['Chicken Karahi', 'Mutton Karahi']
-};
+
+
 
 const ExploreMenu = ({ category, setCategory }) => {
   const [subcategory, setSubcategory] = useState('All');
@@ -40,17 +32,7 @@ const ExploreMenu = ({ category, setCategory }) => {
           </div>
         ))}
       </div>
-      {category !== 'All' && dropdownVisible && subcategories[category] && (
-        <div className="explore-submenu-dropdown">
-          <h2 className='h2e'>Select Subcategory</h2>
-          <select onChange={handleSubcategoryChange} value={subcategory} className='selectt'>
-            <option value="All">All</option>
-            {subcategories[category].map((sub, index) => (
-              <option key={index} value={sub}>{sub}</option>
-            ))}
-          </select>
-        </div>
-      )}
+      
       <hr />
     </div>
   );

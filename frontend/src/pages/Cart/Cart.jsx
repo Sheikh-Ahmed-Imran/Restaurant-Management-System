@@ -52,7 +52,7 @@ const Cart = () => {
             <hr/>
             <div className="cart-total-details">
                 <p>Service Fee</p>
-                <p>{getTotalCartAmount()===0?0:2} pkr</p>
+                <p>{getTotalCartAmount()===0?0:25} pkr</p>
             </div>
             <hr/>
             <div className="cart-total-details">
@@ -62,15 +62,7 @@ const Cart = () => {
           </div>
           <button onClick={()=>navigate('/order')}>PROCEED TO CHECKOUT</button>
         </div>
-        <div className="cart-promocode">
-          <div>
-            <p className='promocodep'>If you have a promo code, Enter it here</p>
-            <div className='cart-promocode-input'>
-                <input type="text" placeholder='Promo Code' />
-                <button>Submit</button>
-            </div>
-          </div>
-        </div>
+       
       </div>
     </div>
   )
