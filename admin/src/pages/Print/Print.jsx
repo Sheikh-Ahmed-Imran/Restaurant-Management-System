@@ -18,41 +18,53 @@ const Print = ({ orders }) => {
         <div key={index} className="ticket" ref={componentRef}>
           <span className="centered">
             Order Receipt
-            <br />{order.address.firstName}{order.address.lastName}
-            <br />Table No :23
+            <br />{order.address.firstName} {order.address.lastName}
+            <br />Table No: 23
           </span>
           <table>
             <thead>
               <tr>
                 <th className="quantity">Name</th>
-                <th className="description">Quantity</th>
-                <th className="price">Price</th>
-                <th className="price">Total</th>
+             
+         
+               {// <th className="price">Total</th>
+}
+                <th className="subcategories">Subcategories</th> {/* New column */}
               </tr>
             </thead>
             <tbody>
               {order.items.map((item, itemIndex) => (
                 <tr key={itemIndex}>
                   <td className="quantity">{item.name}</td>
-                  <td className="description">{item.quantity}</td>
-                  <td className="price">Rs{item.price}</td>
-                  <td className="price">Rs{item.price * item.quantity}</td>
+                 
+                
+                {//  <td className="price">Rs {order.amount}</td>
+}
+                  <td className="subcategories">
+                    <ul>
+                      {item.subcategories.map((subcategory, subIndex) => (
+                        <li key={subIndex}>
+                          {subcategory.name} - {subcategory.quantity}
+                        </li>
+                      ))}
+                    </ul>
+                  </td>
                 </tr>
               ))}
             
               <tr>
-                <td colSpan="2" className="description">Service Charges</td>
+                <td colSpan="3" className="description">Service Charges</td>
                 <td className="price">25</td>
               </tr>
               <tr>
-                <td colSpan="2" className="description">TOTAL</td>
-                <td className="price">Rs{order.amount}</td>
+                <td colSpan="3" className="description">TOTAL</td>
+                <td className="price">Rs {order.amount}</td>
               </tr>
             </tbody>
           </table>
           <span className="centered">
             Thanks for your purchase!
-            <br />Please Visit again in future
+            <br />Please visit again in the future.
           </span>
         </div>
       ))}

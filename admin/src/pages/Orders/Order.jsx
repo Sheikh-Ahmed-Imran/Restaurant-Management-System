@@ -14,9 +14,11 @@ const Orders = ({ url }) => {
           setOrders(response.data.data);
         } else {
           // Handle error
+          console.error("Failed to fetch orders:", response.data.message);
         }
       } catch (error) {
         // Handle error
+        console.error("Error fetching orders:", error);
       }
     };
 
@@ -50,7 +52,7 @@ const Orders = ({ url }) => {
       <h3>Order Page</h3>
       <div className="order-list">
         {orders.map((order, index) => (
-          <div key={index} className="order-item-container">
+          <div key={index} className="order-item-container" style={{ backgroundColor: order.payment ? '#90EE90' : '#ffcccb' }}>
             <Link to={`/orders/${order._id}`} className="order-item-link">
               <div className='order-item'>
                 <img src={assets.parcel_icon} alt="" />
@@ -58,12 +60,14 @@ const Orders = ({ url }) => {
                   <p className='order-item-name'>{order.address.firstName + " " + order.address.lastName}</p>
                 </div>
                 <p>Items: {order.items.length}</p>
-                <p>Rs{order.amount}</p>
-                <select>
+                <p>Amount: Rs {order.amount}</p>
+                <p>Status:</p>
+                <select value={order.address.status} readOnly>
                   <option value="Food Processing">Food Processing</option>
                   <option value="Food Ready">Out for delivery</option>
                   <option value="Food Delivered">Delivered</option>
                 </select>
+                <p>Payment: {order.payment ? "Paid" : "Pending"}</p>
               </div>
             </Link>
             <br />

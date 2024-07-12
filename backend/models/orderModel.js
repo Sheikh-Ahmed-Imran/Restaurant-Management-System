@@ -8,7 +8,7 @@ const orderSchema = new mongoose.Schema({
     status: {type: String, default: "Food Processing"},
     date: {type: Date, default: Date.now()},
     payment: {type: Boolean, default: false},
-    orderTime: {type: Number, required: true}  // New field for order time in minutes
+    orderTime: {type: Number}  // New field for order time in minutes
 })
 
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema)

@@ -1,16 +1,21 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose'
+const Schema = mongoose.Schema;
 
-const foodSchema = new mongoose.Schema({
-    name: {type: String, required: true},
-    description: {type: String, required: true},
-    price: {type: Number, required: true},
-    image: {type: String},
-    category: {type: String, required: true},
-    cookTime: {type: Number, required: true}, // New field for cook time in minutes
-    subcategory: {type: String, required: true},
-    image:{type:String,required:true} // New field for subcategory
+const foodSchema = new Schema({
+    name: { type: String, required: true },
+    description: { type: String, required: true },
+    image: { type: String, required: true },
+    category: { type: String, required: true },
+    cookTime: { type: Number, required: true },
+    subcategory: { type: String, required: true },
+    prices: [
+        {
+            name: { type: String, required: true }, // Example: Small, Medium, Large
+            price: { type: Number, required: true }
+        }
+    ]
 });
 
-const foodModel = mongoose.models.food || mongoose.model("food", foodSchema);
+const Food = mongoose.model('Food', foodSchema);
 
-export default foodModel;
+export default Food;
