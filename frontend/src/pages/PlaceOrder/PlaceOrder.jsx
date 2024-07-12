@@ -28,19 +28,20 @@ const PlaceOrder = () => {
 
     const placeOrder = async (event) => {
         event.preventDefault();
-    
+        
         // Prepare order items from cartItems and selectedOptions
         let orderItems = [];
         food_list.forEach((item) => {
             if (cartItems[item._id] > 0) {
                 const subcategories = selectedOptions[item._id]?.selectedSubcategories || [];
                 const quantities = selectedOptions[item._id]?.quantities || {};
-    
+        
                 let itemInfo = {
                     itemId: item._id,
                     name: item.name,
                     price: item.price,
                     quantity: cartItems[item._id],
+                    cookTime: item.cookTime, // Add cookTime here
                     subcategories: subcategories.map(sub => ({
                         name: sub,
                         quantity: quantities[sub]
@@ -49,7 +50,7 @@ const PlaceOrder = () => {
                 orderItems.push(itemInfo);
             }
         });
-    
+        
         // Calculate max cook time from order items
         let maxTime = 0;
         orderItems.forEach((item) => {
@@ -57,7 +58,7 @@ const PlaceOrder = () => {
                 maxTime = item.cookTime;
             }
         });
-    const a=calculateTotalPrice()
+    
         // Prepare order data to send to backend
         const orderData = {
             address: data,
@@ -65,15 +66,15 @@ const PlaceOrder = () => {
             amount: calculateTotalPrice() + 25, // Include additional fee
             orderTime: maxTime
         };
-    
+        
         console.log(orderData); // Log orderData to verify `amount`
-    
+        
         try {
             // Send orderData to backend for processing with Stripe integration
             let response = await axios.post(`${url}/api/order/place`, orderData, {
                 headers: { token }
             });
-    
+        
             // If order placement is successful, redirect to Stripe checkout session
             if (response.data.success) {
                 const { session_url } = response.data;
@@ -86,7 +87,7 @@ const PlaceOrder = () => {
             alert('Error placing order');
         }
     };
-
+    
     useEffect(() => {
         // Redirect to cart page if no token or no items in cart
         if (!token || calculateTotalPrice() === 0) {

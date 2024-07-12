@@ -68,6 +68,7 @@ const Orders = ({ url }) => {
                   <option value="Food Delivered">Delivered</option>
                 </select>
                 <p>Payment: {order.payment ? "Paid" : "Pending"}</p>
+                <p>Time : {order.orderTime} minutes</p>
               </div>
             </Link>
             <br />
