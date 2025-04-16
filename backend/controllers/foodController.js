@@ -1,43 +1,41 @@
 import foodModel from '../models/foodModel.js'
 import fs from 'fs'
-import cloudinary from 'cloudinary';
-cloudinary.v2.config({
-    cloud_name: 'deuv7ybym',
-    api_key: '783822973561523',
-    api_secret: 'P-j-cNnxmPSlko9rWhnN-sWzOUU'
-});
+import mongoose from 'mongoose';
+import cloudinary from '../config/cloudinary.js';
 
-
-// add food item
 const addFood = async (req, res) => {
-    const { name, description, price, category, subcategory, cookTime } = req.body;
-    
     try {
-        // Upload image to Cloudinary
-        const result = await cloudinary.uploader.upload(req.file.path);
-        
-        // Create a new food item with the Cloudinary URL
-        const food = new foodModel({
-            name,
-            description,
-            price,
-            category,
-            subcategory,
-            cookTime,
-            image: result.secure_url // Store Cloudinary URL
-        });
-
-        // Save the food item to the database
-        await food.save();
-
-        // Send a success response
-        res.json({ success: true, message: "Food Added" });
+      const {
+        name,
+        description,
+        category,
+        cookTime
+      } = req.body;
+  
+      // Parse subcategory and prices JSON
+      const subcategory = JSON.parse(req.body.subcategory); // Array
+      const prices = JSON.parse(req.body.price); // Object
+  
+      const result = await cloudinary.uploader.upload(req.file.path);
+  
+      const food = new foodModel({
+        name,
+        description,
+        category,
+        cookTime,
+        subcategory,
+        prices,
+        image: result.secure_url
+      });
+  
+      await food.save();
+      res.json({ success: true, message: "Food Added" });
     } catch (error) {
-        console.log(error);
-        // Send an error response
-        res.json({ success: false, message: "Error" });
+      console.error("Error adding food:", error);
+      res.json({ success: false, message: "Error adding food" });
     }
-};
+  };
+  
 
 const listFood = async (req, res) => {
     
@@ -55,20 +53,26 @@ const listFood = async (req, res) => {
     }
   };
   
-  
-// remove food item
-const removeFood = async (req,res) => {
+  const removeFood = async (req, res) => {
     try {
-        const food = await foodModel.findById(req.body.id);
-        fs.unlink(`uploads/${food.image}`,()=>{})
+        const { id } = req.body;
+        console.log(id)
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ success: false, message: "Invalid ID" });
+        }
 
-        await foodModel.findByIdAndDelete(req.body.id);
-        res.json({success:true,message:"Food Removed"})
+        const deleted = await foodModel.findByIdAndDelete(id);
+
+        if (!deleted) {
+            return res.status(404).json({ success: false, message: "Food not found or already deleted" });
+        }
+
+        res.json({ success: true, message: "Food Removed" });
     } catch (error) {
         console.log(error);
-        res.json({success:false,message:"Error"})
+        res.status(500).json({ success: false, message: "Server Error" });
     }
-}
+};
 
 
 export {addFood,listFood,removeFood}

@@ -1,0 +1,31 @@
+/* Home.css */
+@import "tailwindcss";
+.home-page-container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f5f5;
+  }
+  
+  /* You can target components by nesting their selectors if needed */
+  main {
+    flex: 1;
+    padding: 20px;
+  }
+  
+  /* Example: style header */
+  .home-page-container header {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+  }
+  
+  /* Example: style footer */
+  .home-page-container footer {
+    background-color: #222;
+    color: white;
+    padding: 20px;
+    text-align: center;
+  }
+  

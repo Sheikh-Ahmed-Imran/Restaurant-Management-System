@@ -91,7 +91,7 @@ const PlaceOrder = () => {
     useEffect(() => {
         // Redirect to cart page if no token or no items in cart
         if (!token || calculateTotalPrice() === 0) {
-            navigate('/cart');
+            //navigate('/cart');
         }
     }, [token, calculateTotalPrice, navigate]);
 

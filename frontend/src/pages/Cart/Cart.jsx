@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 const Cart = () => {
     const { cartItems, food_list, selectedOptions, removeFromCart, calculateTotalPrice, url } = useContext(StoreContext);
     const navigate = useNavigate();
+    console.log('here are',cartItems,food_list)
 
     return (
         <div className='cart'>
@@ -25,12 +26,13 @@ const Cart = () => {
                     if (cartItems[item._id] > 0) {
                         const subcategories = selectedOptions[item._id]?.selectedSubcategories || [];
                         const quantities = selectedOptions[item._id]?.quantities || {};
+                        console.log(item)
 
                         return (
                             <div key={index}>
                                 <div className='cart-items-title cart-items-item'>
                                     <img src={item.image} alt="" />
-                                    <p>{item.name}</p>
+                                    <p>{item.category}</p>
                                     <p>{item.price} pkr</p>
                                     <p>{cartItems[item._id]}</p>
                                     <p>{item.price * cartItems[item._id]} pkr</p>

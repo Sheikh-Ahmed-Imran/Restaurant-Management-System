@@ -11,67 +11,66 @@ const StoreContextProvider = (props) => {
     const url = "http://localhost:4000";
 
     // Function to get total cart amount
-    const getTotalCartAmount = () => {
-        let totalAmount = 0;
-        for (const itemId in cartItems) {
-            const item = food_list.find((product) => product._id === itemId);
-            if (item) {
-                totalAmount += item.price * cartItems[itemId];
-            }
-        }
-        return totalAmount;
-    };
-
-    // Add to cart function
-    const addToCart = async (itemId) => {
+  
+    const addToCart = async (itemId, subcategory, quantity = 1) => {
         try {
-            if (!cartItems[itemId]) {
-                setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
-            } else {
-                setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] + 1 }));
-            }
-            if (token) {
-                await axios.post(url + "/api/cart/add", { itemId }, { headers: { token } });
-            }
+          const cartKey = `${itemId}_${subcategory}`;
+          setCartItems((prev) => {
+            const currentQty = prev[cartKey] || 0;
+            return { ...prev, [cartKey]: quantity };
+          });
+      
+          if (token) {
+            await axios.post(url + "/api/cart/add", {
+              itemId,
+              quantity,
+              subcategory,
+            }, {
+              headers: { token },
+            });
+          }
+
+         
         } catch (error) {
-            console.error("Error adding to cart:", error);
+          console.error("Error adding to cart:", error);
         }
-    };
+      };
+      
+    
 
     // Remove from cart function
     const removeFromCart = async (itemId) => {
-        try {
-            if (cartItems[itemId] > 1) {
-                setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }));
-            } else {
-                const updatedCartItems = { ...cartItems };
-                delete updatedCartItems[itemId];
-                setCartItems(updatedCartItems);
-            }
-            if (token) {
-                await axios.post(url + "/api/cart/remove", { itemId }, { headers: { token } });
-            }
-        } catch (error) {
-            console.error("Error removing from cart:", error);
+        const updatedCartItems = { ...cartItems };
+        delete updatedCartItems[itemId]; // ⛔ remove it completely
+      
+      
+        setCartItems(updatedCartItems);
+      
+        if (token) {
+          await axios.post(url + "/api/cart/remove", { itemId }, {
+            headers: { token },
+          });
         }
-    };
-
+      };
+      
     // Function to calculate total price based on selected options
-    const calculateTotalPrice = () => {
+    const calculateTotalAmount = () => {
         let totalAmount = 0;
-        for (const itemId in selectedOptions) {
-            const item = food_list.find((product) => product._id === itemId);
-            if (item) {
-                const { selectedSubcategories, quantities } = selectedOptions[itemId];
-                selectedSubcategories.forEach(subcategory => {
-                    const price = getPriceForOption(item.subcategory)[subcategory] || 0;
-                    totalAmount += price * quantities[subcategory];
-                    console.log(totalAmount)
-                });
-            }
+      
+        for (const key in cartItems) {
+          const [foodId, quantityStr] = key.split("_");
+          const quantity = parseInt(quantityStr);
+          const selectedSubcategory = cartItems[key];
+      
+          const item = food_list.find((product) => product._id === foodId);
+          const price = item?.price?.[selectedSubcategory] || 0;
+      
+          totalAmount += price * quantity;
         }
-        return totalAmount + 25; // Include additional fee
-    };
+      
+        return totalAmount;
+      };
+      
     
 
     // Fetch food list from server
@@ -97,16 +96,51 @@ const StoreContextProvider = (props) => {
     // Fetch food list and load cart data on component mount
     useEffect(() => {
         const loadData = async () => {
-            await fetchFoodList();
-            const localToken = localStorage.getItem("token");
-            if (localToken) {
-                setToken(localToken);
-                await loadCartData(localToken);
+            try {
+                await Promise.all([
+                    fetchFoodList(),
+                    (() => {
+                        const localToken = localStorage.getItem("token");
+                        if (localToken) {
+                            setToken(localToken);
+                            return loadCartData(localToken);
+                        }
+                        return Promise.resolve();
+                    })()
+                ]);
+            } catch (error) {
+                console.error("Error loading initial data:", error);
             }
         };
         loadData();
     }, []);
-
+    const getTotalCartAmount = () => {
+        let totalAmount = 0;
+        
+        // Check if data is loaded
+        if (!food_list.length || !Object.keys(cartItems).length) {
+            return 0;
+        }
+        for (const key in cartItems) {
+          const [foodId, subcategory] = key.split("_"); // correct this line
+          const quantity = parseInt(cartItems[key]); // quantity is the value now
+      
+          if (isNaN(quantity)) continue;
+      
+          const item = food_list.find((product) => product._id === foodId);
+          if (!item || !item.prices) continue;
+      
+          const price = item.prices[subcategory] || 0;
+      
+          if (!isNaN(price)) {
+              totalAmount += price * quantity;
+          }
+      }
+      
+        
+        return totalAmount;
+    };
+      
     // Function to get price options based on subcategory
     const getPriceForOption = (subcategory) => {
         switch (subcategory) {
@@ -148,7 +182,7 @@ const StoreContextProvider = (props) => {
         setSelectedOptions,
         addToCart,
         removeFromCart,
-        calculateTotalPrice,
+        calculateTotalAmount,
         getTotalCartAmount,
         url,
         token,

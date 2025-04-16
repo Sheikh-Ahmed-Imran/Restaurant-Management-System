@@ -1,22 +1,31 @@
 import React, { useState } from 'react'
 import './Home.css'
-import Header from '../../components/Header/Header'
-import ExploreMenu from '../../components/ExploreMenu/ExploreMenu'
-import FoodDisplay from '../../components/FoodDisplay/FoodDisplay'
-import AppDownload from '../../components/AppDownload/AppDownload'
+
+import { Header } from '../../components/HomePage/Navbar'
+import { Hero } from '../../components/HomePage/HeroSection'
+import { Features } from '../../components/HomePage/Features'
+import { Pricing } from '../../components/HomePage/Pricing'
+import { Testimonials } from '../../components/HomePage/Testemonials'
+import { Contact } from '../../components/HomePage/Contact'
+import { Footer } from '../../components/HomePage/Footer'
+import { Timeline } from '../../components/HomePage/Timeline/Timeline'
 
 const Home = () => {
+  const [category, setCategory] = useState("All")
 
-    const [category,setCategory] = useState("All");
-    
   return (
-    <div>
-        <Header/>
-        <ExploreMenu category={category} setCategory={setCategory}/>
-        <FoodDisplay category={category}/>
-        {//<AppDownload/>}
-}
-    </div>
+    <div className=" min-h-screen flex flex-col ">
+ 
+    <main className="flex-1 space-y-10 px-4 py-8">
+      <Hero />
+      <Timeline />
+      <Features />
+      <Pricing />
+      <Testimonials />
+      <Contact />
+    </main>
+    <Footer />
+  </div>
   )
 }
 

@@ -70,4 +70,16 @@ const registerUser = async (req,res) => {
     }
 }
 
-export {loginUser,registerUser}
+// logout user
+const logoutUser = async (req, res) => {
+  try {
+    // Clear token from client-side
+    res.clearCookie('token');
+    res.json({success: true, message: 'Logged out successfully'});
+  } catch (error) {
+    console.log(error);
+    res.json({success: false, message: 'Error during logout'});
+  }
+}
+
+export {loginUser, registerUser, logoutUser}

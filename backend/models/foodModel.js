@@ -7,13 +7,13 @@ const foodSchema = new Schema({
     image: { type: String, required: true },
     category: { type: String, required: true },
     cookTime: { type: Number, required: true },
-    subcategory: { type: String, required: true },
-    prices: [
-        {
-            name: { type: String, required: true }, // Example: Small, Medium, Large
-            price: { type: Number, required: true }
-        }
-    ]
+    subcategory: { type: [String], required: true },
+
+    prices: {
+        type: Map,
+        of: Number,
+        required: true
+      }
 });
 
 const Food = mongoose.model('Food', foodSchema);

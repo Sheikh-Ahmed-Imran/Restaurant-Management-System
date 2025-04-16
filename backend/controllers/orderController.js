@@ -4,77 +4,76 @@ import Stripe from "stripe";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const placeOrder = async (req, res) => {
-  const frontend_url = "http://localhost:5174";
-   
-  try {
+    const frontend_url = "http://localhost:5173";
+    
+    
+    try {
+      // Use the amount passed from the frontend directly as totalAmount
+      const totalAmount = req.body.amount; 
+  
       // Calculate maximum cook time
       let maxCookTime = 0;
       req.body.items.forEach(item => {
-          if (item.cookTime > maxCookTime) {
-              maxCookTime = item.cookTime;
-          }
+        if (item.cookTime > maxCookTime) {
+          maxCookTime = item.cookTime;
+        }
       });
-      
+  
       // Format items for order creation
       const formattedItems = req.body.items.map(item => ({
-          itemId: item.itemId,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          subcategories: item.subcategories.map(sub => ({
-              name: sub.name,
-              quantity: sub.quantity
-          }))
+        itemId: item.itemId,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity,
+        subcategories: item.subcategory
       }));
   
-      // Calculate total amount based on the price of the first item
-      const totalAmount = req.body.amount;
-   
       // Create new order instance
       const newOrder = new orderModel({
-          userId: req.body.userId,
-          items: formattedItems,
-          amount: totalAmount,
-          address: req.body.address,
-          orderTime: maxCookTime // Save max cook time
+        userId: req.body.userId,
+        items: formattedItems,
+        amount: totalAmount,
+        address: req.body.address,
+        orderTime: maxCookTime // Save max cook time
       });
   
       // Save the order to the database
       await newOrder.save();
   
-      // Prepare line items for Stripe checkout session using the price of the first item
-      const line_items = formattedItems.map((item, index) => ({
+      const line_items = [
+        {
           price_data: {
-              currency: "pkr",
-              product_data: {
-                  name: (index === 0 ? 'Total Amount' : '.')
-              },
-              unit_amount: (index === 0 ? totalAmount : 0) * 100 // Convert price to cents for Stripe, set to 0 for all items except the first
+            currency: 'pkr',
+            product_data: {
+              name: 'Total Amount'
+            },
+            unit_amount: totalAmount*100// Convert totalAmount to cents (if needed)
           },
-          quantity: item.quantity
-      }));
-  
-      // Create Stripe checkout session
+          quantity: 1
+        }
+      ];
+         // Create Stripe checkout session
       const session = await stripe.checkout.sessions.create({
-          payment_method_types: ['card'],
-          line_items: line_items,
-          mode: 'payment',
-          success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
-          cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
-          metadata: {
-              orderId: newOrder._id.toString()
-          }
+        payment_method_types: ['card'],
+        line_items: line_items,
+        mode: 'payment',
+        success_url: `${frontend_url}/verify?success=true&orderId=${newOrder._id}`,
+        cancel_url: `${frontend_url}/verify?success=false&orderId=${newOrder._id}`,
+        metadata: {
+          orderId: newOrder._id.toString()
+        }
       });
   
       // Respond with success and session URL
       res.json({ success: true, session_url: session.url });
   
-  } catch (error) {
+    } catch (error) {
       console.error(error);
       res.status(500).json({ success: false, message: 'Internal server error' });
-  }
-};
-
+    }
+  };
+  
+  
 const verifyOrder = async (req, res) => {
     const { orderId, success } = req.body;
     try {
@@ -86,7 +85,7 @@ const verifyOrder = async (req, res) => {
             res.json({ success: false, message: "Not Paid" });
         }
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: "Error" });
     }
 };
@@ -97,7 +96,7 @@ const userOrders = async (req, res) => {
         const orders = await orderModel.find({ userId: req.body.userId });
         res.json({ success: true, data: orders });
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: "Error" });
     }
 };
@@ -108,7 +107,7 @@ const listOrders = async (req, res) => {
         const orders = await orderModel.find({}).sort({ date: -1 });
         res.json({ success: true, data: orders });
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: "Error" });
     }
 };
@@ -122,7 +121,7 @@ const getSingleOrder = async (req, res) => {
             res.json({ success: true, data: order });
         }
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: "Error" });
     }
 };
@@ -133,7 +132,7 @@ const updateStatus = async (req, res) => {
         await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status });
         res.json({ success: true, message: "Status Updated" });
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: "Error" });
     }
 };
@@ -149,7 +148,7 @@ const deleteOrder = async (req, res) => {
             res.json({ success: false, message: 'Order not found' });
         }
     } catch (error) {
-        console.log(error);
+        
         res.json({ success: false, message: 'Error deleting order' });
     }
 };
