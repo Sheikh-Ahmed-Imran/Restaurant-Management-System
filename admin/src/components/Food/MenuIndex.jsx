@@ -42,6 +42,7 @@ const navigate=useNavigate()
   };
 
   const handleEdit = (id) => {
+    navigate(`/editfood/${id}`);
   };
 
   const handleSelect = (id, selected) => {

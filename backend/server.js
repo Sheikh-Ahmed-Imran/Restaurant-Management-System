@@ -4,13 +4,14 @@ import { connectDB } from "./config/db.js"
 import webhook from './controllers/webhook.js'
 import foodRouter from "./routes/foodRoute.js"        
 import userRouter from "./routes/userRoute.js"     
-import 'dotenv/config'      
+import dotenv from 'dotenv';     
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"       
 
   
      
 // app config      
+dotenv.config();
 const app = express()  
 app.use('/webhook', webhook);
 

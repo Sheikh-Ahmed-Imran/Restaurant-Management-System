@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Dashboard from './components/Dashboard/Dashboard';
 import Menu from './components/Food/MenuIndex';
 import AddFoodPage from './components/AddFood/AddFood';
+import EditFood from './components/Food/EditFood';
 
 
 const App = () => {
@@ -35,6 +36,7 @@ const App = () => {
           <Route path="/food" element={<Menu url={url} />} />
           <Route path="/addfood" element={<AddFoodPage />} />
           <Route path="/allorders" element={<OrderIndex url={url} />} />
+          <Route path="/editfood/:id" element={<EditFood />} />
         </Routes>
       </div>
     </div>
