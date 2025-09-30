@@ -11,10 +11,10 @@ import orderRouter from "./routes/orderRoute.js"
   
      
 // app config      
-dotenv.config();
+
 const app = express()  
 app.use('/webhook', webhook);
-
+dotenv.config();
 const port = 4000       
 const corsOption = { 
     origin: ['http://localhost:5174','http://localhost:5173'],
@@ -24,9 +24,26 @@ const corsOption = {
 // middleware    
 app.use(express.json())
 app.use(cors(corsOption))
-
+let isConnected=false
 // db connection
-connectDB();
+//connectDB();
+async function connectToMongoDB(){
+    try{
+await mongoose.connect(process.env.MONGODB_URI)
+isConnected=true
+
+    }
+    catch(e){
+        console.log(e)
+    }
+}
+
+app.use((req,res,next)=>{
+    if(!isConnected){
+        connectToMongoDB()
+    }
+    next()
+})
   
 // api endpoints
 app.use("/api/food",foodRouter)
@@ -41,8 +58,8 @@ app.get("/",(req,res)=>{
     res.send("API Working")
 })
 
-app.listen(port,()=>{
+/*app.listen(port,()=>{
     console.log(`Server Started on http://localhost:${port}`)
 })
-
-// YOU CAN SAVE UR DATABASE IN THIS COMMENT IF U WANT --> 
+*/
+export default app;
