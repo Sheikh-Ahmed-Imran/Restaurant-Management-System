@@ -4,21 +4,21 @@ import multer from "multer"
 
 const foodRouter = express.Router();
 
-// Image Storage Engine
+// Use memory storage instead of disk storage
+const storage = multer.memoryStorage()
+const upload = multer({ storage })
 
-const storage = multer.diskStorage({
-    destination:"uploads",
-    filename:(req,file,cb)=>{
-        return cb(null,`${Date.now()}${file.originalname}`)
-    }
+// Temporarily remove image upload from routes
+foodRouter.post("/add", async (req, res) => {
+    // Call addFood without image
+    res.json({ message: "File uploads temporarily disabled" })
 })
-
-const upload = multer({storage:storage})
-
-foodRouter.post("/add",upload.single("image"),addFood)
 foodRouter.get("/list",listFood)
 foodRouter.post("/remove",removeFood);
 foodRouter.get("/:id", getFoodById);
-foodRouter.put("/edit",upload.single("imageFile"), editFood);
+foodRouter.put("/edit", async (req, res) => {
+    // Call editFood without image
+    res.json({ message: "File uploads temporarily disabled" })
+})
 
 export default foodRouter;
