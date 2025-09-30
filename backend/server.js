@@ -5,6 +5,7 @@ import webhook from './controllers/webhook.js'
 import foodRouter from "./routes/foodRoute.js"        
 import userRouter from "./routes/userRoute.js"     
 import dotenv from 'dotenv';     
+import mongoose from "mongoose"
 import cartRouter from "./routes/cartRoute.js"
 import orderRouter from "./routes/orderRoute.js"       
 
@@ -60,6 +61,6 @@ app.get("/",(req,res)=>{
 
 /*app.listen(port,()=>{
     console.log(`Server Started on http://localhost:${port}`)
-})
-*/
+})*/
+
 export default app;
